@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Handley Family Tree</title>
     <meta http-equiv="refresh" content="0; url=site/index.html">
     <link rel="canonical" href="site/index.html">
@@ -15,6 +16,8 @@
             justify-content: center;
             background: #f3f4f6;
             color: #1f2933;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
         }
         a {
             color: #1d4ed8;
@@ -25,10 +28,11 @@
         }
         .message {
             background: white;
-            padding: 2rem 3rem;
+            padding: clamp(1.5rem, 5vw, 3rem);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
             text-align: center;
+            width: min(90%, 480px);
         }
     </style>
 </head>
