@@ -34,3 +34,11 @@ uniquely identify the couple based on names alone.
 After running the script open `site/index.html` in your browser. Click a child
 to drill down into their branch, then use the links on each page to continue
 through the family tree or return to the main page.
+
+## Continuous Deployment
+
+Pushing to the `main` branch automatically rebuilds the site with GitHub
+Actions. The workflow runs `generate_family_tree.py` and publishes the contents
+of the `site/` directory directly to GitHub Pages, so the public site stays in
+sync with the latest GEDCOM data. If you want to check the generated files
+before committing, run the command above locally and open `site/index.html`.
