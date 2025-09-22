@@ -20,9 +20,12 @@ import argparse
 import html
 import os
 import re
+import zipfile
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Set
+from xml.etree import ElementTree as ET
 
 
 @dataclass
@@ -185,6 +188,116 @@ class GedcomParser:
 
 def normalise(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+DATE_FORMATS = (
+    "%m/%d/%Y",
+    "%m/%d/%y",
+    "%d/%m/%Y",
+    "%d %b %Y",
+    "%d %B %Y",
+    "%b %d %Y",
+    "%B %d %Y",
+)
+
+
+NAME_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+
+
+def parse_date_string(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    cleaned = value.strip()
+    if not cleaned:
+        return None
+    cleaned = cleaned.replace(",", " ")
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    if re.search(r"[A-Za-z]", cleaned):
+        cleaned = cleaned.title()
+    for fmt in DATE_FORMATS:
+        try:
+            return datetime.strptime(cleaned, fmt)
+        except ValueError:
+            continue
+    if re.fullmatch(r"\d{4}", cleaned):
+        return datetime(int(cleaned), 1, 1)
+    match = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4})", cleaned)
+    if match:
+        month, day, year = (int(part) for part in match.groups())
+        try:
+            return datetime(year, month, day)
+        except ValueError:
+            return None
+    return None
+
+
+def birth_sort_key(individual: Individual) -> tuple:
+    birth_date = parse_date_string(individual.birth.date)
+    if birth_date:
+        return (0, birth_date.year, birth_date.month, birth_date.day, normalise(individual.display_name))
+    return (1, normalise(individual.display_name))
+
+
+def extract_name_key(name: str) -> Optional[str]:
+    tokens = [token for token in re.split(r"[^A-Za-z]+", name) if token]
+    if len(tokens) < 2:
+        return None
+    first = tokens[0].lower()
+    last: Optional[str] = None
+    for token in reversed(tokens[1:]):
+        lower = token.lower()
+        if lower in NAME_SUFFIXES:
+            continue
+        last = lower
+        break
+    if not last:
+        last = tokens[-1].lower()
+    return f"{first} {last}"
+
+
+def extract_docx_paragraphs(path: Path) -> List[str]:
+    try:
+        with zipfile.ZipFile(path) as docx:
+            data = docx.read("word/document.xml")
+    except (FileNotFoundError, KeyError, zipfile.BadZipFile):
+        return []
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        return []
+    namespace = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    paragraphs: List[str] = []
+    for para in root.findall(".//w:body/w:p", namespace):
+        texts: List[str] = []
+        for node in para.findall(".//w:t", namespace):
+            if node.text:
+                texts.append(node.text)
+        paragraph = "".join(texts).strip()
+        if paragraph:
+            paragraphs.append(paragraph)
+    return paragraphs
+
+
+def load_biographies(doc_dir: Path, children: Sequence[Individual]) -> Dict[str, str]:
+    available_docs: Dict[str, Path] = {}
+    for docx_path in doc_dir.glob("*.docx"):
+        key = extract_name_key(docx_path.stem)
+        if key:
+            available_docs[key] = docx_path
+    biographies: Dict[str, str] = {}
+    for child in children:
+        key = extract_name_key(child.display_name)
+        if not key:
+            continue
+        doc_path = available_docs.get(key)
+        if not doc_path:
+            continue
+        paragraphs = extract_docx_paragraphs(doc_path)
+        if not paragraphs:
+            continue
+        content = "".join(f"<p>{html.escape(p)}</p>" for p in paragraphs)
+        biographies[child.id] = content
+    return biographies
 
 
 def find_individual(individuals: Dict[str, Individual], query: str) -> Individual:
@@ -401,7 +514,7 @@ def render_index(
     page_lookup: Dict[str, str],
 ) -> None:
     children = [individuals[child_id] for child_id in base_family.children if child_id in individuals]
-    children.sort(key=lambda ind: ind.birth.date or ind.display_name)
+    children.sort(key=birth_sort_key)
 
     child_cards: List[str] = []
     for child in children:
@@ -463,6 +576,7 @@ def render_descendant_page(
     page_lookup: Dict[str, str],
     base_family: Family,
     index_path: Path,
+    biographies: Dict[str, str],
 ) -> None:
     relative_root = str(output_path.parent)
     index_relpath = str(index_path)
@@ -495,7 +609,17 @@ def render_descendant_page(
             continue
         seen.add(child.id)
         ordered_children.append(child)
-    ordered_children.sort(key=lambda ind: ind.birth.date or ind.display_name)
+    ordered_children.sort(key=birth_sort_key)
+
+    biography_html = biographies.get(person.id, "")
+    biography_section = ""
+    if biography_html:
+        biography_section = (
+            "<section class='person-biography'>"
+            "<h2>Biography</h2>"
+            f"{biography_html}"
+            "</section>"
+        )
 
     children_html = build_children_list(ordered_children, page_lookup, relative_root)
 
@@ -521,6 +645,7 @@ def render_descendant_page(
                 {render_person_summary(person)}
                 {spouse_html}
                 {parent_html}
+                {biography_section}
                 <p><a href='{os.path.relpath(index_path, relative_root)}'>&larr; Back to David and Verna</a></p>
             </section>
         </div>
@@ -614,6 +739,16 @@ header h1 {
 }
 .person-details p {
     font-size: 1rem;
+}
+.person-biography {
+    margin-top: 1.5rem;
+}
+.person-biography h2 {
+    margin-bottom: 0.5rem;
+}
+.person-biography p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
 }
 .empty {
     color: #9aa5b1;
@@ -717,6 +852,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     ensure_dir(output_dir)
     write_stylesheet(output_dir)
 
+    script_dir = Path(__file__).resolve().parent
+    base_children = [individuals[child_id] for child_id in base_family.children if child_id in individuals]
+    biographies = load_biographies(script_dir, base_children)
+
     # Determine paths for descendant pages.
     page_lookup: Dict[str, str] = {}
     for descendant_id in descendants:
@@ -743,6 +882,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
             page_lookup,
             base_family,
             index_path,
+            biographies,
         )
 
     print(f"Generated {len(page_lookup)} descendant pages in {output_dir}.")
