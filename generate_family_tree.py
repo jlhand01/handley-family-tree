@@ -636,6 +636,7 @@ def render_descendant_page(
             <h1>{html.escape(person.display_name)}</h1>
             <p class='lead'>Children appear on the left. Follow the links to continue exploring descendants.</p>
         </header>
+        {biography_section}
         <div class='person-layout'>
             <aside class='person-children'>
                 <h2>Children</h2>
@@ -645,7 +646,6 @@ def render_descendant_page(
                 {render_person_summary(person)}
                 {spouse_html}
                 {parent_html}
-                {biography_section}
                 <p><a href='{os.path.relpath(index_path, relative_root)}'>&larr; Back to David and Verna</a></p>
             </section>
         </div>
