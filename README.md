@@ -13,8 +13,9 @@ python generate_family_tree.py handley.ged site
 The command above builds the site into the `site/` directory. The generated
 `index.html` shows David and Verna on the left with their children arranged in
 a column on the right. Every descendant has a dedicated page (located in
-`site/people/`) where their children are shown on the left so you can navigate
-through the generations.
+`site/people/`) that presents the person's details, followed by any biography,
+and then a list of their children so you can continue navigating through the
+generations.
 
 You can provide alternative base individuals by passing name fragments
 or, if necessary, a specific family identifier:

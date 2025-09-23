@@ -65,24 +65,14 @@ header h1 {
 .person-card .meta {
     color: #64748b;
 }
-.person-layout {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    align-items: flex-start;
-}
-.person-children {
-    flex: 1 1 260px;
-    order: -1;
-}
 .person-details {
-    flex: 2 1 420px;
+    margin-top: 2rem;
 }
 .person-details p {
     font-size: 1rem;
 }
 .person-biography {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 .person-biography h2 {
     margin-bottom: 0.5rem;
@@ -91,12 +81,17 @@ header h1 {
     margin: 0.75rem 0;
     line-height: 1.6;
 }
+.person-children {
+    margin-top: 2rem;
+}
+.person-children h2 {
+    margin-bottom: 0.75rem;
+}
 .empty {
     color: #9aa5b1;
 }
 @media (max-width: 720px) {
-    .base-layout,
-    .person-layout {
+    .base-layout {
         flex-direction: column;
     }
     .base-column {
@@ -104,8 +99,5 @@ header h1 {
     }
     .children-column {
         width: 100%;
-    }
-    .person-children {
-        order: 0;
     }
 }

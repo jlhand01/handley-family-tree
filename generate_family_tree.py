@@ -618,10 +618,17 @@ def render_descendant_page(
             "<section class='person-biography'>"
             "<h2>Biography</h2>"
             f"{biography_html}"
-            "</section>"
+            "</section>\n"
         )
 
     children_html = build_children_list(ordered_children, page_lookup, relative_root)
+
+    children_section = (
+        "<section class='person-children'>"
+        "<h2>Children</h2>"
+        f"{children_html}"
+        "</section>\n"
+    )
 
     page = f"""<!DOCTYPE html>
 <html lang='en'>
@@ -634,21 +641,15 @@ def render_descendant_page(
     <div class='container'>
         <header class='page-header'>
             <h1>{html.escape(person.display_name)}</h1>
-            <p class='lead'>Children appear on the left. Follow the links to continue exploring descendants.</p>
         </header>
+        <section class='person-details'>
+            {render_person_summary(person)}
+            {spouse_html}
+            {parent_html}
+            <p><a href='{os.path.relpath(index_path, relative_root)}'>&larr; Back to David and Verna</a></p>
+        </section>
         {biography_section}
-        <div class='person-layout'>
-            <aside class='person-children'>
-                <h2>Children</h2>
-                {children_html}
-            </aside>
-            <section class='person-details'>
-                {render_person_summary(person)}
-                {spouse_html}
-                {parent_html}
-                <p><a href='{os.path.relpath(index_path, relative_root)}'>&larr; Back to David and Verna</a></p>
-            </section>
-        </div>
+        {children_section}
     </div>
 </body>
 </html>
@@ -724,24 +725,14 @@ header h1 {
 .person-card .meta {
     color: #64748b;
 }
-.person-layout {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    align-items: flex-start;
-}
-.person-children {
-    flex: 1 1 260px;
-    order: -1;
-}
 .person-details {
-    flex: 2 1 420px;
+    margin-top: 2rem;
 }
 .person-details p {
     font-size: 1rem;
 }
 .person-biography {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 .person-biography h2 {
     margin-bottom: 0.5rem;
@@ -750,12 +741,17 @@ header h1 {
     margin: 0.75rem 0;
     line-height: 1.6;
 }
+.person-children {
+    margin-top: 2rem;
+}
+.person-children h2 {
+    margin-bottom: 0.75rem;
+}
 .empty {
     color: #9aa5b1;
 }
 @media (max-width: 720px) {
-    .base-layout,
-    .person-layout {
+    .base-layout {
         flex-direction: column;
     }
     .base-column {
@@ -763,9 +759,6 @@ header h1 {
     }
     .children-column {
         width: 100%;
-    }
-    .person-children {
-        order: 0;
     }
 }
 """
