@@ -1,97 +1,136 @@
-
 :root {
     color-scheme: light;
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
     margin: 0;
     background: #f3f4f6;
     color: #1f2933;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
+
 a {
     color: #1d4ed8;
     text-decoration: none;
 }
-a:hover {
+
+a:hover,
+a:focus-visible {
     text-decoration: underline;
 }
+
+img,
+svg {
+    max-width: 100%;
+    display: block;
+}
+
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2.5rem 1.5rem 4rem;
+    padding: clamp(2rem, 2vw + 1.5rem, 3rem) clamp(1.25rem, 4vw, 3rem) clamp(3rem, 5vw, 4.5rem);
 }
+
+header {
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
 header h1 {
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.35rem;
+    font-size: clamp(2.1rem, 2vw + 1.6rem, 3rem);
 }
+
 .lead {
     color: #52606d;
-    margin-top: 0;
+    margin: 0;
+    max-width: 65ch;
+    font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
 }
+
 .base-layout {
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: clamp(1.5rem, 2vw, 2.5rem);
     align-items: flex-start;
 }
+
 .base-column {
-    flex: 0 0 320px;
+    flex: 1 1 280px;
     display: grid;
     gap: 1.5rem;
 }
+
 .children-column {
-    flex: 1 1 360px;
+    flex: 2 1 380px;
 }
+
+.children-column > h2 {
+    margin-top: 0;
+}
+
 .children-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.1rem;
 }
+
 .person-card {
     background: white;
     border-radius: 10px;
-    padding: 1rem 1.2rem;
+    padding: 1rem 1.25rem;
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
     border: 1px solid rgba(15, 23, 42, 0.08);
 }
+
 .person-card h2,
 .person-card h3,
 .person-card h4 {
     margin-top: 0;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.4rem;
 }
+
 .person-card p {
-    margin: 0.15rem 0;
+    margin: 0.2rem 0;
 }
+
 .person-card .meta {
     color: #64748b;
 }
-.person-details {
-    margin-top: 2rem;
+
+.person-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 2vw, 2.5rem);
+    align-items: flex-start;
 }
+
+.person-children {
+    flex: 1 1 260px;
+    order: -1;
+}
+
+.person-details {
+    flex: 2 1 420px;
+}
+
 .person-details p {
     font-size: 1rem;
 }
-.person-biography {
-    margin-top: 2rem;
-}
-.person-biography h2 {
-    margin-bottom: 0.5rem;
-}
-.person-biography p {
-    margin: 0.75rem 0;
-    line-height: 1.6;
-}
-.person-children {
-    margin-top: 2rem;
-}
-.person-children h2 {
-    margin-bottom: 0.75rem;
-}
+
 .empty {
     color: #9aa5b1;
 }
+
 .ancestry-section {
-    margin-top: 3rem;
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
 }
 
 .ancestry-section h2 {
@@ -126,14 +165,56 @@ header h1 {
     margin: 0.4rem 0;
     line-height: 1.55;
 }
+
+@media (max-width: 960px) {
+    .container {
+        padding: clamp(1.8rem, 2vw + 1.2rem, 2.5rem) clamp(1rem, 5vw, 2rem) clamp(3rem, 6vw, 4rem);
+    }
+}
+
 @media (max-width: 720px) {
-    .base-layout {
+    .base-layout,
+    .person-layout {
         flex-direction: column;
     }
-    .base-column {
+
+    .base-column,
+    .children-column,
+    .person-children,
+    .person-details {
         width: 100%;
     }
-    .children-column {
-        width: 100%;
+
+    .person-children {
+        order: 0;
+    }
+}
+
+@media (max-width: 540px) {
+    .container {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    header h1 {
+        font-size: clamp(1.8rem, 5vw, 2.3rem);
+    }
+
+    .children-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .person-card {
+        padding: 0.9rem 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

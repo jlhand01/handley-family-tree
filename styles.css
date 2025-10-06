@@ -129,6 +129,43 @@ header h1 {
     color: #9aa5b1;
 }
 
+.ancestry-section {
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.ancestry-section h2 {
+    margin-bottom: 1rem;
+}
+
+.ancestry-intro {
+    margin-bottom: 1.5rem;
+}
+
+.ancestry-intro p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.ancestry-lead {
+    margin: 0 0 1.5rem;
+    color: #52606d;
+}
+
+.siblings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.sibling-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.sibling-card p {
+    margin: 0.4rem 0;
+    line-height: 1.55;
+}
+
 @media (max-width: 960px) {
     .container {
         padding: clamp(1.8rem, 2vw + 1.2rem, 2.5rem) clamp(1rem, 5vw, 2rem) clamp(3rem, 6vw, 4rem);
