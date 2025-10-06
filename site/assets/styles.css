@@ -90,6 +90,42 @@ header h1 {
 .empty {
     color: #9aa5b1;
 }
+.ancestry-section {
+    margin-top: 3rem;
+}
+
+.ancestry-section h2 {
+    margin-bottom: 1rem;
+}
+
+.ancestry-intro {
+    margin-bottom: 1.5rem;
+}
+
+.ancestry-intro p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.ancestry-lead {
+    margin: 0 0 1.5rem;
+    color: #52606d;
+}
+
+.siblings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.sibling-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.sibling-card p {
+    margin: 0.4rem 0;
+    line-height: 1.55;
+}
 @media (max-width: 720px) {
     .base-layout {
         flex-direction: column;

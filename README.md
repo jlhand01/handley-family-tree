@@ -36,6 +36,22 @@ After running the script open `site/index.html` in your browser. Click a child
 to drill down into their branch, then use the links on each page to continue
 through the family tree or return to the main page.
 
+## Updating Word Biographies
+
+The `.docx` biographies stored in the repository can be edited directly without
+re-running the site generator. To update them:
+
+1. Copy the document you want to change from the repository to your computer.
+2. Make the edits in Microsoft Word (or another editor that can save `.docx`
+   files) and save the file with the same name.
+3. Replace the original file in the repository with your updated version.
+4. Stage and commit the change so the new document is tracked in version
+   control.
+
+You can also add new biographies by dropping additional `.docx` files into the
+repository and committing them. Keeping the filenames descriptive (for example,
+`First Last.docx`) makes them easier to locate later.
+
 ## Continuous Deployment
 
 Pushing to the `main` branch automatically rebuilds the site with GitHub
