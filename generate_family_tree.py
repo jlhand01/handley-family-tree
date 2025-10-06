@@ -561,6 +561,42 @@ def render_index(
                 </div>
             </div>
         </section>
+        <section class='ancestry-section' id='david-handley-siblings'>
+            <h2>Family Roots</h2>
+            <div class='person-card ancestry-intro'>
+                <p><strong>Father:</strong> <a href='people/alex-handley-I106254684.html'>Alex Handley</a> (c. 1892 &ndash; 5 Apr 1959, Little Rock, Pulaski County, Arkansas)</p>
+                <p><strong>Mother:</strong> Jester Ann Pegross (Feb 1891 &ndash; Mar 1977, Tillar, Desha County, Arkansas)</p>
+                <p>Alex and Jester Ann settled in Jefferson County, Arkansas, where they raised David and his siblings in the Tillar community.</p>
+            </div>
+            <p class='ancestry-lead'>David grew up alongside five siblings. These brief profiles highlight the paths each of them took.</p>
+            <div class='siblings-grid'>
+                <div class='person-card sibling-card'>
+                    <h3>Alex Handley (c.1911&ndash;1938)</h3>
+                    <p>Born in Louisiana, Alex was the eldest son in the family.</p>
+                    <p>He was recorded with the household in Jefferson County, Arkansas in 1930 and passed away in nearby Drew County on 29 July 1938.</p>
+                </div>
+                <div class='person-card sibling-card'>
+                    <h3>Jimmie Handley (c.1914&ndash;1995)</h3>
+                    <p>Jimmie spent his early years in Louisiana before joining the family in Jefferson County, Arkansas.</p>
+                    <p>He later made his home in Tillar and died in Saint Anne, Illinois in August 1995.</p>
+                </div>
+                <div class='person-card sibling-card'>
+                    <h3>Mollie Handley (c.1917&ndash;1991)</h3>
+                    <p>Mollie was born in Louisiana and appeared in the family&rsquo;s Jefferson County household in 1930.</p>
+                    <p>By 1940 she was living in Winchester, Drew County, Arkansas, where she remained until her death in September 1991.</p>
+                </div>
+                <div class='person-card sibling-card'>
+                    <h3>Joshua Handley (c.1918&ndash;1993)</h3>
+                    <p>Joshua also grew up in the Jefferson County household after his birth in Louisiana.</p>
+                    <p>He later moved north and passed away in Chicago, Illinois on 6 March 1993.</p>
+                </div>
+                <div class='person-card sibling-card'>
+                    <h3>Leola Handley (1921&ndash;2005)</h3>
+                    <p>Leola was born on 23 September 1921 and remained close to the family.</p>
+                    <p>She was living in McGehee, Arkansas by the mid-1980s and died there on 9 June 2005.</p>
+                </div>
+            </div>
+        </section>
     </div>
 </body>
 </html>
@@ -658,110 +694,10 @@ def render_descendant_page(
 
 
 def write_stylesheet(output_dir: Path) -> None:
-    css = """
-:root {
-    color-scheme: light;
-}
-body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    margin: 0;
-    background: #f3f4f6;
-    color: #1f2933;
-}
-a {
-    color: #1d4ed8;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 4rem;
-}
-header h1 {
-    margin-bottom: 0.25rem;
-}
-.lead {
-    color: #52606d;
-    margin-top: 0;
-}
-.base-layout {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    align-items: flex-start;
-}
-.base-column {
-    flex: 0 0 320px;
-    display: grid;
-    gap: 1.5rem;
-}
-.children-column {
-    flex: 1 1 360px;
-}
-.children-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-}
-.person-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1rem 1.2rem;
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-    border: 1px solid rgba(15, 23, 42, 0.08);
-}
-.person-card h2,
-.person-card h3,
-.person-card h4 {
-    margin-top: 0;
-    margin-bottom: 0.25rem;
-}
-.person-card p {
-    margin: 0.15rem 0;
-}
-.person-card .meta {
-    color: #64748b;
-}
-.person-details {
-    margin-top: 2rem;
-}
-.person-details p {
-    font-size: 1rem;
-}
-.person-biography {
-    margin-top: 2rem;
-}
-.person-biography h2 {
-    margin-bottom: 0.5rem;
-}
-.person-biography p {
-    margin: 0.75rem 0;
-    line-height: 1.6;
-}
-.person-children {
-    margin-top: 2rem;
-}
-.person-children h2 {
-    margin-bottom: 0.75rem;
-}
-.empty {
-    color: #9aa5b1;
-}
-@media (max-width: 720px) {
-    .base-layout {
-        flex-direction: column;
-    }
-    .base-column {
-        width: 100%;
-    }
-    .children-column {
-        width: 100%;
-    }
-}
-"""
+    css_path = Path(__file__).resolve().with_name("styles.css")
+    if not css_path.exists():
+        raise FileNotFoundError(f"Expected stylesheet at {css_path}")
+    css = css_path.read_text(encoding="utf-8")
     write_file(output_dir / "assets" / "styles.css", css)
 
 
